@@ -1,27 +1,37 @@
-const express = require('express');
-
+const express = require("express");
+const connectDB = require("./config/database");
 const app = express();
+const User = require("./models/user");
 
-// This will match only GET API calls to /user
-app.get("/user", (req, res) => {
-    res.send({ firstName: "Varun", lastName: "Garg" });
-})
+app.use(express.json());
 
-app.post("/user", (req, res) => {
-    // Saving data to DB
-    res.send("Data succesfully saved to the database");
-})
+app.post("/signup", async (req, res) => {
+  
+  // Creating a new instance of the User Model
+  const user = new User(req.body);
 
-app.delete("/user", (req, res) => { 
-    // Deleting data from DB
-    res.send("Data succesfully deleted from the database");
-})
+  // const user = new User({
+  //   firstName: "Arun",
+  //   lastName: "Garg",
+  //   emailId: "arun@garg.com",
+  //   password: "Arun@123",
+  // });
 
-// This will match all the HTTP methods API calls to /test
-app.use("/test", (req, res) => {
-    res.send("Hello Varun, this is test route");
-})
+  try {
+    await user.save();
+    res.send("User added successfully");
+  } catch (err) {
+    res.status(400).send("Error in adding user :" + err.message);
+  }
+});
 
-app.listen(3000, () => {
-    console.log("Server is running on port 3000");
-}) 
+connectDB()
+  .then(() => {
+    console.log("Database Connected Successfully");
+    app.listen(3000, () => {
+      console.log("Server is running on port 3000..");
+    });
+  })
+  .catch((err) => {
+    console.log("Database cannot be Connected");
+  });
