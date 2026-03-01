@@ -1,9 +1,12 @@
 const express = require("express");
 const connectDB = require("./config/database");
+const dotenv = require("dotenv");
 const app = express();
 const User = require("./models/user");
 
 app.use(express.json());
+
+dotenv.config();
 
 app.post("/signup", async (req, res) => {
   
@@ -24,6 +27,24 @@ app.post("/signup", async (req, res) => {
     res.status(400).send("Error in adding user :" + err.message);
   }
 });
+
+// Feed API - GET /feed - get all users from the database
+app.get("/feed", async (req, res) => {
+  const userEmail = req.body.emailId;
+
+  try {
+    const users = await User.find({ emailId: userEmail });
+    if (users.length === 0) {
+      res.status(404).send("User not found");
+    }
+    else {
+      res.send(users);
+    }
+  }
+  catch (err) {
+    res.status(400).send("Error in fetching users :" + err.message);
+  }
+})
 
 connectDB()
   .then(() => {
