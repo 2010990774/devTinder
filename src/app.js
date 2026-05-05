@@ -9,7 +9,6 @@ app.use(express.json());
 dotenv.config();
 
 app.post("/signup", async (req, res) => {
-  
   // Creating a new instance of the User Model
   const user = new User(req.body);
 
@@ -36,15 +35,42 @@ app.get("/feed", async (req, res) => {
     const users = await User.find({ emailId: userEmail });
     if (users.length === 0) {
       res.status(404).send("User not found");
-    }
-    else {
+    } else {
       res.send(users);
     }
-  }
-  catch (err) {
+  } catch (err) {
     res.status(400).send("Error in fetching users :" + err.message);
   }
-})
+});
+
+// Delete a user from the Database
+app.delete("/user", async (req, res) => {
+  const userId = req.body.userId;
+
+  try {
+    const user = await User.findByIdAndDelete(userId);
+    res.send("User deleted successfully");
+  } catch (err) {
+    res.status(400).send("Error in deleting user :" + err.message);
+  }
+});
+
+// Update data of the user in the database
+app.patch("/user", async (req, res) => {
+  console.log(req.body);
+  const userId = req.body.userId;
+  const data = req.body;
+
+  try {
+    await User.findByIdAndUpdate({ _id: userId }, data, {
+      returnDocument: "before",
+      runValidators: true,
+    });
+    res.send("User data updated successfully");
+  } catch (err) {
+    res.status(400).send("Update Failed :" + err.message);
+  }
+});
 
 connectDB()
   .then(() => {
