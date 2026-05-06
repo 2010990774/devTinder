@@ -81,3 +81,14 @@
 - Add timestamps to the USER Schema
 - Add API level validation on PATCH request and Signup POST API
 - DATA SANITIZATION -- Add API validation for each field
+- Install validator
+- Explore validator library functions and use validator functions for password, email and etc.
+- NEVER Trust req.body --- EVER
+
+*                               Encrypting Passwords
+
+- Validate Data in SignUp API
+- Install bcrypt package
+- Create HashPassword Using bcrypt.hash & save the user with encrypted password
+- Create Login API
+- Compare the password and throw error if email or password is invalid
