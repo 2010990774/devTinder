@@ -5,9 +5,12 @@ const app = express();
 const User = require("./models/user");
 const { validateSignUpData } = require("./utils/validation");
 const bcrypt = require("bcrypt");
+const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
+const { userAuth } = require("./middlewares/auth");
 
 app.use(express.json());
-
+app.use(cookieParser());
 dotenv.config();
 
 app.post("/signup", async (req, res) => {
@@ -19,7 +22,7 @@ app.post("/signup", async (req, res) => {
 
     // Encrypt the Password
     const hashPassword = await bcrypt.hash(password, 10);
-    console.log(hashPassword);
+    // console.log(hashPassword);
 
     // Creating Or Storing a new instance of the User Model
     const user = new User({
@@ -53,8 +56,15 @@ app.post("/login", async (req, res) => {
       throw new Error("Invalid Credentials");
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = await user.validatePassword(password);
     if (isPasswordValid) {
+      // Create a JWT token for the user
+      const token = await user.getJWT();
+
+      // Add the token to cookie and send the response back to the user
+      res.cookie("token", token, {
+        expires: new Date(Date.now() + 7 * 3600 * 1000),
+      });
       res.send("Login Successfully!!");
     } else {
       throw new Error("Invalid Credentials");
@@ -64,63 +74,21 @@ app.post("/login", async (req, res) => {
   }
 });
 
-// Feed API - GET /feed - get all users from the database
-app.get("/feed", async (req, res) => {
-  const userEmail = req.body.emailId;
-
+app.get("/profile", userAuth, async (req, res) => {
   try {
-    const users = await User.find({ emailId: userEmail });
-    if (users.length === 0) {
-      res.status(404).send("User not found");
-    } else {
-      res.send(users);
-    }
+    const user = req.user;
+    res.send(user);
   } catch (err) {
-    res.status(400).send("Error in fetching users :" + err.message);
+    res.status(400).send("ERROR : " + err.message);
   }
 });
 
-// Delete a user from the Database
-app.delete("/user", async (req, res) => {
-  const userId = req.body.userId;
+app.post("/sendConnectionRequest", userAuth, async (req, res) => {
+  const user = req.user;
 
-  try {
-    const user = await User.findByIdAndDelete(userId);
-    res.send("User deleted successfully");
-  } catch (err) {
-    res.status(400).send("Error in deleting user :" + err.message);
-  }
-});
-
-// Update data of the user in the database
-app.patch("/user/:userId", async (req, res) => {
-  console.log(req.body);
-  const userId = req.params?.userId;
-  const data = req.body;
-
-  try {
-    const ALLOWED_UPDATES = ["photoUrl", "age", "about", "gender", "skills"];
-
-    const isUpdatedAllowed = Object.keys(data).every((k) => {
-      ALLOWED_UPDATES.includes(k);
-    });
-
-    if (!isUpdatedAllowed) {
-      throw new Error("Update is not allowed");
-    }
-
-    if (data?.skills > 10) {
-      throw new Error("Skills cannot be more than 10");
-    }
-
-    await User.findByIdAndUpdate({ _id: userId }, data, {
-      returnDocument: "before",
-      runValidators: true,
-    });
-    res.send("User data updated successfully");
-  } catch (err) {
-    res.status(400).send("Update Failed :" + err.message);
-  }
+  res.send(
+    user.firstName + " " + user.lastName + " sent the connection request!!!",
+  );
 });
 
 connectDB()
