@@ -106,3 +106,17 @@
 - Set the expiry of JWT and cookies to 7 days
 - create userSchema method to getJWT()
 - create userSchema method to comparePassword(passwordInputByUser)
+
+*                               Diving Into The API's and Express Router
+
+- Explore Tinder API's
+- Create a list of all API's you can think of in Dev Tinder
+- Group Mutliple routes under respective routers
+- Read documentation for Express.Router
+- Create routes folder for managing auth, profile, request routers
+- Create authRouter, profileRouter, requestRouter
+- Import these routers in app.js
+- Create POST /logout API
+- Create PATCH /profile/edit
+- Create PATCH /profile/password API => Forgot Password API
+- Make sure you validate all data in every POST, PATCH API's
