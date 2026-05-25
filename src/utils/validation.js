@@ -17,7 +17,7 @@ const validateSignUpData = (req) => {
   }
 };
 
-const vlaidateEditProfileData = (req) => {
+const validateEditProfileData = (req) => {
   const allowedFields = [
     "firstName",
     "lastName",
@@ -37,5 +37,5 @@ const vlaidateEditProfileData = (req) => {
 
 module.exports = {
   validateSignUpData,
-  vlaidateEditProfileData,
+  validateEditProfileData,
 };
