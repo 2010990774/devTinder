@@ -138,3 +138,8 @@
 - Why should we not create a lot of indexes in DB?
 
 - ALWAYS THINK ABOUT THE CORNER CASES
+
+*                               Ref, Populate & Thought Process of Writing API'S
+
+- Write code with proper validations for POST /request/review/:status/:requestId API
+- Thought Process - POST vs GET
