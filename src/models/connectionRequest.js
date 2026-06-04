@@ -20,7 +20,7 @@ const connectionRequestSchema = new mongoose.Schema(
       },
     },
   },
-  { timestamps: true },
+  // { timestamps: true },
 );
 
 // ConnectionRequest.find(fromUserId : 2930201, toUserId : 293020211)

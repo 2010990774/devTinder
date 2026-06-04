@@ -74,9 +74,9 @@ const userSchema = new mongoose.Schema(
       type: [String],
     },
   },
-  {
-    timestamps: true,
-  },
+  // {
+  // timestamps: true,
+  // },
 );
 
 userSchema.methods.getJWT = async function () {
